@@ -1,5 +1,7 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+import _ from 'lodash'
+
 
 const state = {
   toggle: false,
@@ -7,14 +9,16 @@ const state = {
   totalProfit: 0,
   totalLoss: 0,
   stocks: [],
-  stock: "drijal"
+  stock: {}
 }
 
 const actions = {
   async getAllStocks({ state, commit }) {
     const stocks = await axios.get("http://localhost:3333/cards");
 
-    commit("setStocks", stocks.data)
+    const sortedStocks = _.chain(stocks.data).sortBy(({ ticker }) => ticker).value()
+
+    commit("setStocks", sortedStocks)
 
     const total = state.stocks.reduce((sum, stock) => {
       return sum + parseFloat(stock.total)
@@ -28,9 +32,6 @@ const actions = {
       return sum + parseFloat(stock.total)
     }, 0)
 
-
-
-
     commit("setTotal", total.toFixed(2))
     commit("setTotalProfit", totalProfit.toFixed(2))
     commit("setTotalLoss", totalLoss.toFixed(2))
@@ -39,27 +40,44 @@ const actions = {
   async getLoss({ commit, state, dispatch }) {
     await dispatch('getAllStocks')
 
-    const stocks = state.stocks.filter(f => {
-      return f.total < 0
-    });
+    const stocks = _.chain(state.stocks)
+      .filter((f) => f.total < 0)
+      .sortBy(({ total }) => -parseFloat(total))
+      .value()
 
     commit("setStocks", stocks)
+
+
   },
 
   async getProfit({ commit, state, dispatch }) {
     await dispatch('getAllStocks')
 
-    const stocks = state.stocks.filter(f => {
-      return f.total > 0
-    });
+    const stocks = _.chain(state.stocks)
+      .filter((f) => f.total > 0)
+      .sortBy(({ total }) => parseFloat(total))
+      .value()
 
     commit("setStocks", stocks)
+  },
+
+  async getStock({ commit }, id) {
+    let stock = await axios.get(`http://localhost:3333/tables/${id}`);
+
+    commit("setStock", stock.data)
+
   }
 }
 
 const mutations = {
   toggleval(state) {
     state.toggle = !state.toggle
+  },
+
+  setStock(state, stock) {
+
+    state.stock = stock
+
   },
 
   setTotal(state, total) {
