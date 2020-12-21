@@ -5,9 +5,8 @@
       class="h3 mb-2"
       :class="stock.total > 0 ? 'text-success' : 'text-danger'"
     >
-      {{ stock.ticker }}
+      {{ stock._id }}
     </h1>
-
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
       <div class="card-header py-3">
@@ -29,14 +28,15 @@
                 <th>Quantity</th>
                 <th>Cost/Share</th>
                 <th>Amount</th>
+                <th colspan="3">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="transaction in stock.transactions"
-                :key="transaction"
+                :key="transaction._id"
                 :class="
-                  transaction.action == 'Buy' ? 'text-success' : 'text-danger'
+                  transaction.action == 'Buy' ? 'text-danger' : 'text-success'
                 "
               >
                 <td>{{ transaction.description }}</td>
@@ -45,6 +45,34 @@
                 <td>{{ transaction.quantity }}</td>
                 <td>{{ transaction.price }}</td>
                 <td>${{ transaction.amount }}</td>
+                <td>
+                  <a
+                    @click="toggleRealized(transaction)"
+                    :class="
+                      transaction.type === 'realized'
+                        ? 'text-primary'
+                        : 'text-success'
+                    "
+                    ><i
+                      class="fas fa-sm text-success-50"
+                      :class="
+                        transaction.type === 'realized'
+                          ? 'fa-money-check'
+                          : 'fa-money-check-alt'
+                      "
+                    ></i
+                  ></a>
+                </td>
+                <td>
+                  <a href="#" class="text-info"
+                    ><i class="fas fa-edit fa-sm text-primary-50"></i
+                  ></a>
+                </td>
+                <td>
+                  <a href="#" class="text-danger"
+                    ><i class="fas fa-trash fa-sm text-danger-50"></i
+                  ></a>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -53,6 +81,12 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+a {
+  cursor: pointer;
+}
+</style>
 
 <script>
 import { computed } from "vue";
@@ -69,9 +103,16 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
+
     store.dispatch("getStock", route.params.id);
+
+    let stock = computed(() => store.getters.getStock);
+
     return {
-      stock: computed(() => store.state.stock),
+      stock,
+      async toggleRealized(transaction) {
+        await store.dispatch("toggleRealized", transaction);
+      },
     };
   },
 };

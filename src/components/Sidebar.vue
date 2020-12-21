@@ -81,7 +81,7 @@ export default {
     return {
       toggle: computed(() => store.state.toggle),
       clickToggle: () => {
-        store.commit("toggleval");
+        store.dispatch("toggleSidebar");
       },
     };
   },

@@ -5,36 +5,25 @@ import _ from 'lodash'
 
 const state = {
   toggle: false,
+  baseUrl: "http://localhost:3333/",
   total: 0,
   totalProfit: 0,
   totalLoss: 0,
+  uploadStatus: "",
   stocks: [],
   stock: {}
 }
 
 const actions = {
-  async getAllStocks({ state, commit }) {
-    const stocks = await axios.get("http://localhost:3333/cards");
 
-    const sortedStocks = _.chain(stocks.data).sortBy(({ ticker }) => ticker).value()
+  toggleSidebar({ commit }) {
+    commit("toggleSidebar")
+  },
 
-    commit("setStocks", sortedStocks)
+  async getAllStocks({ commit, state }, frame) {
+    const stocks = await axios.get(`${state.baseUrl}cards?frame=${frame}`);
 
-    const total = state.stocks.reduce((sum, stock) => {
-      return sum + parseFloat(stock.total)
-    }, 0)
-
-    const totalLoss = state.stocks.filter(f => f.total < 0).reduce((sum, stock) => {
-      return sum + parseFloat(stock.total)
-    }, 0)
-
-    const totalProfit = state.stocks.filter(f => f.total > 0).reduce((sum, stock) => {
-      return sum + parseFloat(stock.total)
-    }, 0)
-
-    commit("setTotal", total.toFixed(2))
-    commit("setTotalProfit", totalProfit.toFixed(2))
-    commit("setTotalLoss", totalLoss.toFixed(2))
+    commit("setAllStocks", stocks.data)
   },
 
   async getLoss({ commit, state, dispatch }) {
@@ -42,12 +31,10 @@ const actions = {
 
     const stocks = _.chain(state.stocks)
       .filter((f) => f.total < 0)
-      .sortBy(({ total }) => -parseFloat(total))
+      .sortBy(({ total }) => parseFloat(total))
       .value()
 
-    commit("setStocks", stocks)
-
-
+    commit("setAllStocks", stocks)
   },
 
   async getProfit({ commit, state, dispatch }) {
@@ -55,29 +42,63 @@ const actions = {
 
     const stocks = _.chain(state.stocks)
       .filter((f) => f.total > 0)
-      .sortBy(({ total }) => parseFloat(total))
+      .sortBy(({ total }) => -parseFloat(total))
       .value()
 
-    commit("setStocks", stocks)
+    commit("setAllStocks", stocks)
   },
 
-  async getStock({ commit }, id) {
-    let stock = await axios.get(`http://localhost:3333/tables/${id}`);
+  async toggleRealized({ dispatch, state }, transaction) {
+    await axios.post(`${state.baseUrl}tables/${transaction._id}`, transaction)
+
+    dispatch("getStock", transaction.symbol)
+  },
+
+  async getStock({ commit, state }, id) {
+    let stock = await axios.get(`${state.baseUrl}tables/${id}`);
 
     commit("setStock", stock.data)
+  },
 
+
+  async searchSymbol({ commit, dispatch }, search) {
+    await dispatch('getAllStocks')
+
+    const stocks = _.chain(state.stocks).filter(f => f._id.includes(search.toUpperCase())).value()
+
+    commit("setAllStocks", stocks)
+  },
+
+  async uploadFile({ commit, state }, formData) {
+    const headers = {
+      'Content-Type': 'multipart/form-data'
+    }
+
+    await axios.post(`${state.baseUrl}stocks/upload`, formData, headers)
+
+    commit("setuploadStatus", "Upload Success")
   }
 }
 
 const mutations = {
+  toggleSidebar(state) {
+    state.toggle = !state.toggle
+  },
+
+  setAllStocks(state, stocks) {
+    state.stocks = stocks
+  },
+
   toggleval(state) {
     state.toggle = !state.toggle
   },
 
   setStock(state, stock) {
-
     state.stock = stock
+  },
 
+  setuploadStatus(state, status) {
+    state.uploadStatus = status
   },
 
   setTotal(state, total) {
@@ -91,14 +112,39 @@ const mutations = {
   setTotalProfit(state, totalProfit) {
     state.totalProfit = totalProfit
   },
+}
 
-  setStocks(state, stocks) {
-    state.stocks = stocks
+const getters = {
+  getStock(state) {
+    return state.stock
+  },
+
+  getStocks(state) {
+    return _.chain(state.stocks).sortBy(({ _id }) => _id).value()
+  },
+
+  getTotal() {
+    return state.stocks.reduce((sum, stock) => {
+      return sum + parseFloat(stock.total)
+    }, 0)
+  },
+
+  getTotalLoss() {
+    return state.stocks.filter(f => f.total < 0).reduce((sum, stock) => {
+      return sum + parseFloat(stock.total)
+    }, 0)
+  },
+
+  getTotalProfit() {
+    return state.stocks.filter(f => f.total > 0).reduce((sum, stock) => {
+      return sum + parseFloat(stock.total)
+    }, 0)
   }
 }
 
 export default createStore({
   state,
   mutations,
+  getters,
   actions
 })
