@@ -7,15 +7,15 @@
       id="accordionSidebar"
     >
       <!-- Sidebar - Brand -->
-      <a
+      <router-link
+        to="/"
         class="sidebar-brand d-flex align-items-center justify-content-center"
-        href="index.html"
       >
         <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-laugh-wink"></i>
+          <i class="fas fa-money-check"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
-      </a>
+        <div class="sidebar-brand-text mx-3">Stocks Log</div>
+      </router-link>
 
       <!-- Divider -->
       <hr class="sidebar-divider my-0" />

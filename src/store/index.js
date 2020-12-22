@@ -11,6 +11,7 @@ const state = {
   totalLoss: 0,
   uploadStatus: "",
   stocks: [],
+  getTotalStocks: 0,
   stock: {}
 }
 
@@ -20,10 +21,18 @@ const actions = {
     commit("toggleSidebar")
   },
 
-  async getAllStocks({ commit, state }, frame) {
-    const stocks = await axios.get(`${state.baseUrl}cards?frame=${frame}`);
+  async getAllStocks({ commit, state }, page = 1) {
+    const stocks = await axios.get(`${state.baseUrl}cards?frame=${500}`);
 
-    commit("setAllStocks", stocks.data)
+    const sstocks = _.chain(stocks.data).sortBy(({ _id }) => _id).value()
+
+    state.getTotalStocks = sstocks.length
+
+    console.log(page)
+
+    const paginated = _(sstocks).drop((page - 1) * 60).take(60).value();
+
+    commit("setAllStocks", paginated)
   },
 
   async getLoss({ commit, state, dispatch }) {
@@ -31,7 +40,7 @@ const actions = {
 
     const stocks = _.chain(state.stocks)
       .filter((f) => f.total < 0)
-      .sortBy(({ total }) => parseFloat(total))
+      .sortBy(({ total }) => total)
       .value()
 
     commit("setAllStocks", stocks)
@@ -40,10 +49,11 @@ const actions = {
   async getProfit({ commit, state, dispatch }) {
     await dispatch('getAllStocks')
 
-    const stocks = _.chain(state.stocks)
+    const stocks = await _.chain(state.stocks)
       .filter((f) => f.total > 0)
-      .sortBy(({ total }) => -parseFloat(total))
+      .sortBy(({ total }) => -total)
       .value()
+
 
     commit("setAllStocks", stocks)
   },
@@ -117,10 +127,6 @@ const mutations = {
 const getters = {
   getStock(state) {
     return state.stock
-  },
-
-  getStocks(state) {
-    return _.chain(state.stocks).sortBy(({ _id }) => _id).value()
   },
 
   getTotal() {

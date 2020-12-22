@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h4 mb-0 text-gray-800">Tickers ({{ stocks.length }})</h1>
+      <h1 class="h4 mb-0 text-gray-800">Tickers ({{ getTotalStocks }})</h1>
 
       <!-- Nav Item - User Information -->
       <span class="dropdown">
@@ -77,7 +77,7 @@
     </div>
     <div class="row">
       <div
-        class="col-xl-2 col-md-6 mb-4"
+        class="col-xl-1 col-md-6 mb-4"
         v-for="stock in stocks"
         :key="stock._id"
       >
@@ -99,18 +99,18 @@
                     ${{ stock.total.toFixed(2) }}
                   </div>
                   <div
-                    class="h5 mb-0 font-weight-bold"
+                    class="h7 mb-0 font-weight-bold"
                     :class="stock.total > 0 ? 'text-success' : 'text-danger'"
                   >
                     {{ stock._id }}
                   </div>
                 </div>
-                <div class="col-auto">
+                <!-- <div class="col-auto">
                   <i
                     class="fas fa-dollar-sign fa-2x"
                     :class="stock.total > 0 ? 'text-success' : 'text-danger'"
                   ></i>
-                </div>
+                </div> -->
               </div>
             </div>
           </router-link>
@@ -118,24 +118,45 @@
         </div>
       </div>
     </div>
+    <v-pagination
+      v-model="page"
+      :pages="pages"
+      :range-size="1"
+      active-color="#DCEDFF"
+      @update:modelValue="updateHandler"
+    />
   </div>
 </template>
 
 <script>
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import VPagination from "vue3-pagination";
+import "vue3-pagination/dist/vue3-pagination.css";
+
 export default {
   name: "Cards",
+  components: {
+    VPagination,
+  },
   setup() {
     const store = useStore();
+    const page = ref(page);
     store.dispatch("getAllStocks");
     return {
+      page,
       filterDropdown: ref(false),
-      stocks: computed(() => store.getters.getStocks),
+      getTotalStocks: computed(() => store.state.getTotalStocks),
+      pages: computed(() => Math.ceil(store.state.getTotalStocks / 60)),
+      stocks: computed(() => store.state.stocks),
       total: computed(() => store.getters.getTotal),
       totalProfit: computed(() => store.getters.getTotalProfit),
       totalLoss: computed(() => store.getters.getTotalLoss),
       totalTransaction: computed(() => store.state.totalTransaction),
+
+      updateHandler() {
+        store.dispatch("getAllStocks", page.value);
+      },
 
       loss() {
         this.filterDropdown = false;
