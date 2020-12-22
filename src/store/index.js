@@ -5,7 +5,7 @@ import _ from 'lodash'
 
 const state = {
   toggle: false,
-  baseUrl: "http://localhost:3333/",
+  baseUrl: "http://localhost:4000/",
   total: 0,
   totalProfit: 0,
   totalLoss: 0,
