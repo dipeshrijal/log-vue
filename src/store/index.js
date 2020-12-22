@@ -5,6 +5,7 @@ import _ from 'lodash'
 
 const state = {
   toggle: false,
+  mutatedAllStocks: [],
   baseUrl: "http://localhost:4000/",
   total: 0,
   totalProfit: 0,
@@ -19,6 +20,11 @@ const actions = {
 
   toggleSidebar({ commit }) {
     commit("toggleSidebar")
+  },
+
+  async getMutatedStock({ commit }) {
+    const stocks = await axios.get(`${state.baseUrl}`);
+    commit("setMutatedStocks", stocks.data)
   },
 
   async getAllStocks({ commit, state }, page = 1) {
@@ -93,6 +99,10 @@ const actions = {
 const mutations = {
   toggleSidebar(state) {
     state.toggle = !state.toggle
+  },
+
+  setMutatedStocks(state, stocks) {
+    state.mutatedAllStocks = stocks
   },
 
   setAllStocks(state, stocks) {
