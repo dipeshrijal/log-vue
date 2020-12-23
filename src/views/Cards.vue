@@ -77,7 +77,7 @@
     </div>
     <div class="row">
       <div
-        class="col-xl-1 col-md-6 mb-4"
+        class="col-xl-2 col-md-6 mb-4"
         v-for="stock in stocks"
         :key="stock._id"
       >
