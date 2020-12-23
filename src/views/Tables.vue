@@ -106,7 +106,7 @@ export default {
 
     store.dispatch("getStock", route.params.id);
 
-    let stock = computed(() => store.getters.getStock);
+    let stock = computed(() => store.state.stock);
 
     return {
       stock,
