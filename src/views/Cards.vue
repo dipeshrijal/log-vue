@@ -14,7 +14,7 @@
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
-          ><i class="fas fa-filter fa-sm text-white-50"></i> Filter
+          ><i class="fas fa-filter fa-sm text-white-50"></i> {{ filter }}
         </a>
         <!-- Dropdown - User Information -->
         <div
@@ -22,32 +22,32 @@
           :class="filterDropdown ? 'show' : ''"
           aria-labelledby="filterDropdown"
         >
-          <a class="dropdown-item" @click="all">
+          <a class="dropdown-item" @click="all('All')">
             <i class="fas fa-balance-scale fa-sm fa-fw mr-2 text-gray-400"></i>
             All
           </a>
-          <a class="dropdown-item" @click="profit">
+          <a class="dropdown-item" @click="profit('Profit')">
             <i class="fas fa-level-up-alt fa-sm fa-fw mr-2 text-gray-400"></i>
             Profit
           </a>
 
-          <a class="dropdown-item" @click="loss">
+          <a class="dropdown-item" @click="loss('Loss')">
             <i class="fas fa-level-down-alt fa-sm fa-fw mr-2 text-gray-400"></i>
             Loss
           </a>
           <div class="dropdown-divider"></div>
           <a
             class="dropdown-item"
-            @click="recent(1)"
+            @click="recent(1, 'Last 1 Day')"
             data-toggle="modal"
             data-target="#uploadModal"
           >
             <i class="fas fa-calendar fa-sm fa-fw mr-2 text-gray-400"></i>
-            Last Day
+            Last 1 Day
           </a>
           <a
             class="dropdown-item"
-            @click="recent(3)"
+            @click="recent(3, 'Last 3 Days')"
             data-toggle="modal"
             data-target="#uploadModal"
           >
@@ -56,7 +56,7 @@
           </a>
           <a
             class="dropdown-item"
-            @click="recent(7)"
+            @click="recent(7, 'Last 7 Days')"
             data-toggle="modal"
             data-target="#uploadModal"
           >
@@ -65,7 +65,7 @@
           </a>
           <a
             class="dropdown-item"
-            @click="recent(30)"
+            @click="recent(30, 'Last 30 Days')"
             data-toggle="modal"
             data-target="#uploadModal"
           >
@@ -129,27 +129,34 @@ export default {
   name: "Cards",
   setup() {
     const store = useStore();
+
     store.dispatch("getAllStocks");
+
     return {
       filterDropdown: ref(false),
+      filter: ref("Filter"),
       stocks: computed(() => store.state.stocks),
 
-      loss() {
+      loss(filter) {
+        this.filter = filter;
         this.filterDropdown = false;
         store.dispatch("getLoss");
       },
 
-      profit() {
+      profit(filter) {
+        this.filter = filter;
         store.dispatch("getProfit");
         this.filterDropdown = false;
       },
 
-      all() {
+      all(filter) {
+        this.filter = filter;
         store.dispatch("getAllStocks");
         this.filterDropdown = false;
       },
 
-      recent(frame) {
+      recent(frame, filter) {
+        this.filter = filter;
         store.dispatch("getAllStocks", frame);
         this.filterDropdown = false;
       },
