@@ -7,6 +7,10 @@ const state = {
   mutatedAllStocks: [],
   baseUrl: "http://localhost:4000/",
   uploadStatus: "",
+  totalStocksCount: 0,
+  paginatePerPage: 30,
+  paginationCurrentPage: 0,
+  status: "all",
   stocks: [],
   stock: {}
 }
@@ -32,11 +36,31 @@ const actions = {
       totaledStock.push(data)
     })
 
+
+
     const sstocks = _.chain(totaledStock)
       .sortBy(({ _id }) => _id)
       .value()
 
+    // const totalStocksCount = sstocks.length
+    // commit("setTotalStockCount", totalStocksCount)
+
     commit("setAllStocks", sstocks)
+  },
+
+  async paginate({ commit, dispatch, state }) {
+
+    if (state.status === "all") {
+      await dispatch("getAllStocks")
+    } else {
+      await dispatch(`get${state.status.charAt(0).toUpperCase() + state.status.slice(1)}`)
+    }
+
+    const totalStocksCount = state.stocks.length
+    commit("setTotalStockCount", totalStocksCount)
+
+    const paginated = _(state.stocks).drop((state.paginationCurrentPage - 1) * state.paginatePerPage).take(state.paginatePerPage).value();
+    commit("setAllStocks", paginated)
   },
 
   async getLoss({ commit, state, dispatch }) {
@@ -47,8 +71,21 @@ const actions = {
       .sortBy(({ total }) => total)
       .value()
 
+
     commit("setAllStocks", stocks)
   },
+
+  async getProfit({ commit, state, dispatch }) {
+    await dispatch('getAllStocks')
+
+    const stocks = _.chain(state.stocks)
+      .filter((f) => f.total > 0)
+      .sortBy(({ total }) => -total)
+      .value()
+
+    commit("setAllStocks", stocks)
+  },
+
 
   async getOpenPositions({ commit, state, dispatch }) {
     await dispatch('getAllStocks')
@@ -66,20 +103,14 @@ const actions = {
       })
       .value()
 
-    commit("setAllStocks", stocks)
+    const paginated = _(stocks).drop((state.paginationCurrentPage - 1) * state.paginatePerPage).take(state.paginatePerPage).value();
+    const totalStocksCount = stocks.length
+    commit("setTotalStockCount", totalStocksCount)
+
+    commit("setAllStocks", paginated)
 
   },
 
-  async getProfit({ commit, state, dispatch }) {
-    await dispatch('getAllStocks')
-
-    const stocks = _.chain(state.stocks)
-      .filter((f) => f.total > 0)
-      .sortBy(({ total }) => -total)
-      .value()
-
-    commit("setAllStocks", stocks)
-  },
 
   async toggleRealized({ dispatch, state }, transaction) {
     await axios.post(`${state.baseUrl}tables/${transaction._id}`, transaction)
@@ -101,7 +132,10 @@ const actions = {
       .filter(f => f._id.includes(search.toUpperCase()))
       .value()
 
-    commit("setAllStocks", stocks)
+    const paginated = _(stocks).drop((state.paginationCurrentPage - 1) * state.paginatePerPage).take(state.paginatePerPage).value();
+    const totalStocksCount = stocks.length
+    commit("setTotalStockCount", totalStocksCount)
+    commit("setAllStocks", paginated)
   },
 
   async uploadFile({ commit, state }, formData) {
@@ -124,6 +158,10 @@ const mutations = {
 
   setMutatedStocks(state, stocks) {
     state.mutatedAllStocks = stocks
+  },
+
+  setTotalStockCount(state, totalStocksCount) {
+    state.totalStocksCount = totalStocksCount
   },
 
   setAllStocks(state, stocks) {
