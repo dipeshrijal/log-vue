@@ -4,6 +4,7 @@ import axios from 'axios'
 
 const state = {
   toggle: false,
+  mutatedAllStocks: [],
   baseUrl: "http://localhost:4000/",
   uploadStatus: "",
   stocks: [],
@@ -119,6 +120,10 @@ const actions = {
 const mutations = {
   toggleSidebar(state) {
     state.toggle = !state.toggle
+  },
+
+  setMutatedStocks(state, stocks) {
+    state.mutatedAllStocks = stocks
   },
 
   setAllStocks(state, stocks) {
