@@ -67,7 +67,16 @@
             data-target="#uploadModal"
           >
             <i class="fas fa-calendar fa-sm fa-fw mr-2 text-gray-400"></i>
-            Last 7 Days
+            Last 15 Days
+          </a>
+          <a
+            class="dropdown-item"
+            @click="recent(7, 'Last 15 Days')"
+            data-toggle="modal"
+            data-target="#uploadModal"
+          >
+            <i class="fas fa-calendar fa-sm fa-fw mr-2 text-gray-400"></i>
+            Last 15 Days
           </a>
           <a
             class="dropdown-item"
