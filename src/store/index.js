@@ -19,7 +19,19 @@ const actions = {
   async getAllStocks({ commit, state }, frame) {
     const stocks = await axios.get(`${state.baseUrl}cards?frame=${frame}`);
 
-    const sstocks = _.chain(stocks.data)
+    let totaledStock = [];
+
+    _.each(stocks.data, (data) => {
+      const total = data.transactions.reduce((sum, stock) => {
+        return sum + (stock.type == "realized" ? stock.amount : 0)
+      }, 0)
+
+      data.total = parseFloat(total.toFixed(2))
+
+      totaledStock.push(data)
+    })
+
+    const sstocks = _.chain(totaledStock)
       .sortBy(({ _id }) => _id)
       .value()
 
@@ -37,14 +49,33 @@ const actions = {
     commit("setAllStocks", stocks)
   },
 
+  async getOpenPositions({ commit, state, dispatch }) {
+    await dispatch('getAllStocks')
+
+    const stocks = _.chain(state.stocks)
+      .filter(({ transactions }) => {
+        let exists = false
+        _.each(transactions, k => {
+          if (k.type === "unrealized") {
+            exists = true
+          }
+        })
+
+        return exists
+      })
+      .value()
+
+    commit("setAllStocks", stocks)
+
+  },
+
   async getProfit({ commit, state, dispatch }) {
     await dispatch('getAllStocks')
 
-    const stocks = await _.chain(state.stocks)
+    const stocks = _.chain(state.stocks)
       .filter((f) => f.total > 0)
       .sortBy(({ total }) => -total)
       .value()
-
 
     commit("setAllStocks", stocks)
   },

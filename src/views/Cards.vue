@@ -35,6 +35,12 @@
             <i class="fas fa-level-down-alt fa-sm fa-fw mr-2 text-gray-400"></i>
             Loss
           </a>
+
+          <a class="dropdown-item" @click="open('Open')">
+            <i class="fas fa-money-check fa-sm fa-fw mr-2 text-gray-400"></i>
+            Open
+          </a>
+
           <div class="dropdown-divider"></div>
           <a
             class="dropdown-item"
@@ -84,7 +90,7 @@
         <div
           class="card shadow h-100 py-2"
           :class="
-            stock.total > 0 ? 'border-left-success' : 'border-left-danger'
+            stock.total >= 0 ? 'border-left-success' : 'border-left-danger'
           "
         >
           <!-- <router-link :to="{ name: 'Tables', params: { id: 'fb' } }"> -->
@@ -94,13 +100,13 @@
                 <div class="col mr-2">
                   <div
                     class="text-xs font-weight-bold text-uppercase mb-1"
-                    :class="stock.total > 0 ? 'text-success' : 'text-danger'"
+                    :class="stock.total >= 0 ? 'text-success' : 'text-danger'"
                   >
-                    ${{ stock.total.toFixed(2) }}
+                    ${{ stock.total }}
                   </div>
                   <div
                     class="h7 mb-0 font-weight-bold"
-                    :class="stock.total > 0 ? 'text-success' : 'text-danger'"
+                    :class="stock.total >= 0 ? 'text-success' : 'text-danger'"
                   >
                     {{ stock._id }}
                   </div>
@@ -152,6 +158,12 @@ export default {
       all(filter) {
         this.filter = filter;
         store.dispatch("getAllStocks");
+        this.filterDropdown = false;
+      },
+
+      open(filter) {
+        this.filter = filter;
+        store.dispatch("getOpenPositions");
         this.filterDropdown = false;
       },
 
