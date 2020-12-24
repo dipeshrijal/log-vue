@@ -7,32 +7,41 @@
       <section filter="condition" class="mb-4">
         <h6 class="font-weight-bold mb-3">Condition</h6>
 
-        <div class="form-check pl-0 mb-3">
+        <!-- <div
+          v-for="condition in conditions"
+          :key="condition.cssid"
+          class="form-check pl-0 mb-3"
+        >
           <input
-            type="checkbox"
-            class="filter-option form-check-input filled-in"
-            @click="open('Open')"
-            condition="new"
-            id="new"
+            type="radio"
+            @click="postionStatus(condition.params)"
+            class="filter-option form-check-input"
+            :id="condition.cssid"
+            name="condtionfilter"
           />
           <label
             class="form-check-label small text-uppercase card-link-secondary"
-            for="new"
-            >Open</label
+            :for="condition.cssid"
+            >{{ condition.text }}</label
           >
-        </div>
-        <div class="form-check pl-0 mb-3">
+        </div> -->
+        <div
+          class="form-check pl-0 mb-3"
+          v-for="condition in conditions"
+          :key="condition.cssid"
+        >
           <input
             type="checkbox"
+            :value="condition.params"
+            v-model="checked"
             class="filter-option form-check-input filled-in"
-            @click="open('Open')"
-            condition="closed"
-            id="closed"
+            @change="postionStatus()"
+            :id="condition.cssid"
           />
           <label
             class="form-check-label small text-uppercase card-link-secondary"
-            for="closed"
-            >closed</label
+            :for="condition.cssid"
+            >{{ condition.text }}</label
           >
         </div>
       </section>
@@ -84,41 +93,57 @@
       <!-- Section: Timeframes -->
     </section>
     <!-- Section: Filters -->
+    <loading :active="isLoading" :is-full-page="fullPage"></loading>
   </section>
 </template>
 
 <script>
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import filters from "./filters";
+import Loading from "vue3-loading-overlay";
+// Import stylesheet
+import "vue3-loading-overlay/dist/vue3-loading-overlay.css";
 
 export default {
   name: "Filter",
+  components: {
+    Loading,
+  },
   setup() {
     const store = useStore();
-
     const status = filters.status;
     const timeFrames = filters.timeFrames;
-
+    const conditions = filters.conditions;
+    const checked = ref(false);
+    const isLoading = ref(computed(() => store.state.isLoading));
+    const fullPage = ref(true);
     return {
       timeFrames,
       status,
+      conditions,
+      checked,
+      isLoading,
+      fullPage,
 
       getStatus(status) {
         store.state.status = status;
-        store.dispatch("paginate");
+        store.dispatch("filteredStocks");
       },
 
-      open() {
-        store.dispatch("getOpenPositions");
+      async postionStatus() {
+        store.state.postionStatus = this.checked;
+        await store.dispatch("filteredStocks");
       },
 
       recent(frame) {
-        store.dispatch("getAllStocks", frame);
+        store.state.timeFilter = frame;
+        store.dispatch("filteredStocks");
       },
     };
   },
 };
 </script>
 
-<style>
+<style scoped>
 </style>

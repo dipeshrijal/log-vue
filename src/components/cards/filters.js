@@ -2,7 +2,7 @@ const timeFrames = [
     {
         text: "All",
         params: "",
-        cssid: "all",
+        cssid: "timeall",
     },
     {
         text: "Last 1 Day",
@@ -49,8 +49,17 @@ const status = [
     },
 ];
 
+const conditions = [
+    {
+        text: "Unrealized",
+        cssid: "unrealized",
+        params: "unrealized",
+    }
+];
+
 
 export default {
     timeFrames,
     status,
+    conditions
 }

@@ -144,8 +144,8 @@
             </div>
           </div>
         </div>
-
         <v-pagination
+          v-if="pages > 1"
           class="pagination"
           v-model="page"
           :pages="pages"
@@ -174,7 +174,7 @@ export default {
   },
   setup() {
     const store = useStore();
-    const page = ref(page);
+    const page = ref(store.state.paginationCurrentPage);
 
     store.dispatch("paginate", page.value);
 
