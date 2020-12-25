@@ -15,10 +15,9 @@
     "moment": "^2.29.1",
     "sweetalert": "^2.1.2",
     "vue": "^3.0.0",
-    "vue-pagination-3": "^2.0.0-beta01",
     "vue-router": "^4.0.0-0",
     "vue3-loading-overlay": "^0.0.0",
-    "vue3-table-lite": "^1.0.2",
+    "vue3-pagination": "^1.0.10",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
