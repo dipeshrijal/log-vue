@@ -10,12 +10,37 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
       <div class="card-header py-3">
-        <h6
-          class="m-0 font-weight-bold"
-          :class="stock.total > 0 ? 'text-success' : 'text-danger'"
-        >
-          {{ stock.total }}
-        </h6>
+        <div class="row">
+          <div class="col-6">
+            <h6
+              class="m-0 font-weight-bold"
+              :class="stock.total > 0 ? 'text-success' : 'text-danger'"
+            >
+              {{ stock.total }}
+            </h6>
+          </div>
+          <div class="col-6">
+            <div
+              class="form-check form-check-inline"
+              v-for="time in timeFrames"
+              :key="time.cssid"
+            >
+              <input
+                class="form-check-input"
+                type="radio"
+                @change="callme"
+                v-model="inlineRadioOptions"
+                name="inlineRadioOptions"
+                :id="time.cssid"
+                :value="time.params"
+              />
+              <label class="form-check-label" :for="time.cssid">{{
+                time.text
+              }}</label>
+              <div class="divider"></div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -89,10 +114,12 @@ a {
 </style>
 
 <script>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import moment from "moment";
+import filters from "@/components/cards/filters.js";
+
 export default {
   name: "Tables",
   methods: {
@@ -103,13 +130,23 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
+    const timeFrames = filters.timeFrames;
+    const inlineRadioOptions = ref(store.state.timeFilter);
 
     store.dispatch("getStock", route.params.id);
 
-    let stock = computed(() => store.state.stock);
+    const stock = computed(() => store.state.stock);
 
     return {
+      timeFrames,
       stock,
+      inlineRadioOptions,
+
+      callme() {
+        store.state.timeFilter = this.inlineRadioOptions;
+        store.dispatch("getStock", route.params.id);
+      },
+
       async toggleRealized(transaction) {
         await store.dispatch("toggleRealized", transaction);
       },
@@ -117,4 +154,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.divider {
+  margin: auto 1rem;
+}
+</style>
 
