@@ -131,7 +131,6 @@ const actions = {
 
   async filteredStocks({ commit, state, dispatch }) {
     state.isLoading = true
-    state.paginationCurrentPage = 1
     let stocks = []
 
     // await dispatch('getAllStocks')
@@ -176,6 +175,7 @@ const actions = {
     commit("setAllStocks", paginated)
 
     state.isLoading = false
+    state.paginationCurrentPage = 0
 
   },
 
@@ -218,7 +218,7 @@ const actions = {
   },
 
   async getStock({ commit, state }, id) {
-    let stock = await axios.get(`${state.baseUrl}tables/${id}`);
+    let stock = await axios.get(`${state.baseUrl}tables/${id}?frame=${state.timeFilter}`);
 
     commit("setStock", stock.data)
   },

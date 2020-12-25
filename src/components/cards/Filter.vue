@@ -6,25 +6,6 @@
       <!-- Section: Condition -->
       <section filter="condition" class="mb-4">
         <h6 class="font-weight-bold mb-3">Condition</h6>
-
-        <!-- <div
-          v-for="condition in conditions"
-          :key="condition.cssid"
-          class="form-check pl-0 mb-3"
-        >
-          <input
-            type="radio"
-            @click="postionStatus(condition.params)"
-            class="filter-option form-check-input"
-            :id="condition.cssid"
-            name="condtionfilter"
-          />
-          <label
-            class="form-check-label small text-uppercase card-link-secondary"
-            :for="condition.cssid"
-            >{{ condition.text }}</label
-          >
-        </div> -->
         <div
           class="form-check pl-0 mb-3"
           v-for="condition in conditions"
@@ -41,6 +22,9 @@
           <label
             class="form-check-label small text-uppercase card-link-secondary"
             :for="condition.cssid"
+            ><i
+              :class="`fas ${condition.icon} fa-sm fa-fw mr-2 text-gray-400`"
+            ></i
             >{{ condition.text }}</label
           >
         </div>
@@ -54,14 +38,17 @@
         <div v-for="s in status" :key="s.cssid" class="form-check pl-0 mb-3">
           <input
             type="radio"
-            @click="getStatus(s.params)"
+            @change="getStatus()"
             class="filter-option form-check-input"
             :id="s.cssid"
+            :value="s.params"
+            v-model="statusRadio"
             name="materialExampleRadios"
           />
           <label
             class="form-check-label small text-uppercase card-link-secondary"
             :for="s.cssid"
+            ><i :class="`fas ${s.icon} fa-sm fa-fw mr-2 text-gray-400`"></i
             >{{ s.text }}</label
           >
         </div>
@@ -78,14 +65,19 @@
         >
           <input
             type="radio"
-            @click="recent(timeFrame.params)"
+            @change="recent"
             class="filter-option form-check-input"
             :id="timeFrame.cssid"
+            v-model="timeRadio"
+            :value="timeFrame.params"
             name="materialExampleRadios1"
           />
           <label
             class="form-check-label small text-uppercase card-link-secondary"
             :for="timeFrame.cssid"
+            ><i
+              :class="`fas ${timeFrame.icon} fa-sm fa-fw mr-2 text-gray-400`"
+            ></i
             >{{ timeFrame.text }}</label
           >
         </div>
@@ -115,7 +107,9 @@ export default {
     const status = filters.status;
     const timeFrames = filters.timeFrames;
     const conditions = filters.conditions;
-    const checked = ref(false);
+    const checked = ref(store.state.postionStatus);
+    const statusRadio = ref(store.state.status);
+    const timeRadio = ref(store.state.timeFilter);
     const isLoading = ref(computed(() => store.state.isLoading));
     const fullPage = ref(true);
     return {
@@ -125,10 +119,12 @@ export default {
       checked,
       isLoading,
       fullPage,
+      statusRadio,
+      timeRadio,
 
-      getStatus(status) {
-        store.state.status = status;
-        store.dispatch("filteredStocks");
+      async getStatus() {
+        store.state.status = this.statusRadio;
+        await store.dispatch("filteredStocks");
       },
 
       async postionStatus() {
@@ -136,8 +132,8 @@ export default {
         await store.dispatch("filteredStocks");
       },
 
-      recent(frame) {
-        store.state.timeFilter = frame;
+      recent() {
+        store.state.timeFilter = this.timeRadio;
         store.dispatch("filteredStocks");
       },
     };
