@@ -5,7 +5,7 @@ import axios from 'axios'
 const state = {
   toggle: false,
   mutatedAllStocks: [],
-  baseUrl: "http://log.com/",
+  baseUrl: "http://log.com/backend/",
   uploadStatus: "",
   totalStocksCount: 0,
   paginatePerPage: 30,
