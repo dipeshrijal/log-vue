@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  log-vue:
+    image: dipeshrijal/log-vue:1.0.1
+    ports:
+      - 8080:80
+  log-api:
+    image: dipeshrijal/log-api:1.0.1
+    ports:
+      - 4000:4000
