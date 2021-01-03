@@ -1,38 +1,38 @@
-const timeFrames = [
+const range = [
     {
         text: "All",
         params: "",
-        cssid: "timeall",
+        id: "timeall",
         icon: "fa-calendar"
     },
     {
         text: "Last 1 Day",
         params: "1",
-        cssid: "last1day",
+        id: "last1day",
         icon: "fa-calendar"
     },
     {
         text: "Last 3 Days",
         params: "3",
-        cssid: "last3days",
+        id: "last3days",
         icon: "fa-calendar"
     },
     {
         text: "Last 7 Days",
         params: "7",
-        cssid: "last7days",
+        id: "last7days",
         icon: "fa-calendar"
     },
     {
         text: "Last 15 Days",
         params: "15",
-        cssid: "last15days",
+        id: "last15days",
         icon: "fa-calendar"
     },
     {
         text: "Last 30 Days",
         params: "30",
-        cssid: "last30days",
+        id: "last30days",
         icon: "fa-calendar"
     }
 ];
@@ -40,28 +40,28 @@ const timeFrames = [
 const status = [
     {
         text: "All",
-        cssid: "all",
+        id: "all",
         params: "all",
         icon: "fa-balance-scale"
     },
     {
         text: "Profit",
-        cssid: "profit",
+        id: "profit",
         params: "profit",
         icon: "fa-level-up-alt"
     },
     {
         text: "Loss",
-        cssid: "loss",
+        id: "loss",
         params: "loss",
         icon: "fa-level-down-alt"
     },
 ];
 
-const conditions = [
+const gains = [
     {
         text: "Unrealized",
-        cssid: "unrealized",
+        id: "unrealized",
         params: "unrealized",
         icon: "fa-money-check"
     }
@@ -69,7 +69,7 @@ const conditions = [
 
 
 export default {
-    timeFrames,
+    range,
     status,
-    conditions
+    gains
 }

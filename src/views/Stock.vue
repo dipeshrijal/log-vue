@@ -29,7 +29,7 @@
               :class="filterDropdown ? 'show' : ''"
               aria-labelledby="filterDropdown"
             >
-              <a class="dropdown-item" @click="plStatus()">
+              <a class="dropdown-item" @click="togglePrivate">
                 <i
                   class="fas fa-balance-scale fa-sm fa-fw mr-2 text-gray-400"
                 ></i>
@@ -60,7 +60,7 @@
                 stock.total >= 0 ? 'border-left-success' : 'border-left-danger'
               "
             >
-              <router-link :to="{ name: 'Tables', params: { id: stock._id } }">
+              <router-link :to="{ name: 'StockDetails', params: { id: stock._id } }">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
@@ -110,32 +110,32 @@ import Filter from "@/components/cards/Filter.vue";
 import "vue3-pagination/dist/vue3-pagination.css";
 
 export default {
-  name: "Cards",
+  name: "Stock",
   components: {
     VPagination,
     Filter,
   },
   setup() {
     const store = useStore();
-    const page = ref(store.state.paginationCurrentPage);
+    const page = ref(store.state.stocks.paginationCurrentPage);
 
-    store.dispatch("paginate", page.value);
+    store.dispatch("stocks/filter", page.value);
 
     return {
       page,
       filterDropdown: ref(false),
       filter: ref("Filter"),
-      stocks: computed(() => store.state.stocks),
-      totalStocksCount: computed(() => store.state.totalStocksCount),
-      pages: computed(() => Math.ceil(store.state.totalStocksCount / 30)),
+      stocks: computed(() => store.state.stocks.stocks),
+      totalStocksCount: computed(() => store.state.stocks.count),
+      pages: computed(() => Math.ceil(store.state.stocks.count / 30)),
 
       paginate() {
-        store.state.paginationCurrentPage = page.value;
-        store.dispatch("paginate");
+        store.state.stocks.paginationCurrentPage = page.value;
+        store.dispatch("stocks/filter");
       },
 
-      plStatus() {
-        store.dispatch("PnLstatus")
+      togglePrivate() {
+        store.dispatch("stocks/togglePrivate")
       },
 
       toggleFilterDropdown() {

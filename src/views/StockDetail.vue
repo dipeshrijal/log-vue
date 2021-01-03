@@ -22,20 +22,20 @@
           <div class="col-6">
             <div
               class="form-check form-check-inline"
-              v-for="time in timeFrames"
-              :key="time.cssid"
+              v-for="r in range"
+              :key="r.id"
             >
               <input
                 class="form-check-input"
                 type="radio"
-                @change="callme"
-                v-model="inlineRadioOptions"
+                @change="recent"
+                v-model="rangeRadio"
                 name="inlineRadioOptions"
-                :id="time.cssid"
-                :value="time.params"
+                :id="r.id"
+                :value="r.params"
               />
-              <label class="form-check-label" :for="time.cssid">{{
-                time.text
+              <label class="form-check-label" :for="r.id">{{
+                r.text
               }}</label>
               <div class="divider"></div>
             </div>
@@ -104,7 +104,7 @@
         </div>
       </div>
     </div>
-    <!-- Logout Modal-->
+    <!-- Edit Modal-->
     <div
       class="modal fade show"
       id="uploadModal"
@@ -174,7 +174,7 @@ import moment from "moment";
 import filters from "@/components/cards/filters.js";
 
 export default {
-  name: "Tables",
+  name: "StockDetail",
   methods: {
     date: (date) => {
       return moment(date).format("YYYY/MM/DD");
@@ -183,25 +183,26 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
-    const timeFrames = filters.timeFrames;
-    const inlineRadioOptions = ref(store.state.timeFilter);
 
-    store.dispatch("getStock", route.params.id);
+    const range = filters.range;
+    const rangeRadio = ref(store.state.stock.range);
 
-    const stock = computed(() => store.state.stock);
+    store.dispatch("stock/index", route.params.id);
+
+    const stock = computed(() => store.state.stock.stock);
 
     return {
-      timeFrames,
       stock,
-      inlineRadioOptions,
+      range,
+      rangeRadio,
 
-      callme() {
-        store.state.timeFilter = this.inlineRadioOptions;
-        store.dispatch("getStock", route.params.id);
+      recent() {
+        store.state.stock.range = this.rangeRadio;
+        store.dispatch("stock/index", route.params.id);
       },
 
       async toggleRealized(transaction) {
-        await store.dispatch("toggleRealized", transaction);
+        await store.dispatch("stock/update", transaction);
       },
     };
   },

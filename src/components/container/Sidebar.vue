@@ -3,7 +3,7 @@
     <!-- Sidebar -->
     <ul
       class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
-      :class="toggle == true ? 'toggled' : ''"
+      :class="isSidebarMinimized == true ? 'toggled' : ''"
       id="accordionSidebar"
     >
       <!-- Sidebar - Brand -->
@@ -30,7 +30,7 @@
 
       <!-- Nav Item - Cards -->
       <li class="nav-item">
-        <router-link class="nav-link" :to="{ name: 'Cards' }">
+        <router-link class="nav-link" :to="{ name: 'Stocks' }">
           <i class="fas fa-fw fa-money-check"></i>
           <span>Cards</span>
         </router-link>
@@ -56,7 +56,7 @@
       <li class="nav-item">
         <router-link
           class="nav-link"
-          :to="{ name: 'Tables', params: { id: 'fb' } }"
+          :to="{ name: 'StockDetails', params: { id: 'fb' } }"
         >
           <i class="fas fa-fw fa-table"></i>
           <span>Tables </span>
@@ -71,7 +71,7 @@
         <button
           class="rounded-circle border-0"
           id="sidebarToggle"
-          @click="clickToggle"
+          @click="toggleSidebar"
         ></button>
       </div>
     </ul>
@@ -87,8 +87,8 @@ export default {
   setup() {
     const store = useStore();
     return {
-      toggle: computed(() => store.state.toggle),
-      clickToggle: () => {
+      isSidebarMinimized: computed(() => store.state.isSidebarMinimized),
+      toggleSidebar: () => {
         store.dispatch("toggleSidebar");
       },
     };

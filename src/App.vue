@@ -25,9 +25,9 @@
 
 <script>
 // @ is an alias to /src
-import Sidebar from "@/components/Sidebar.vue";
-import Topbar from "@/components/Topbar.vue";
-import Pagetop from "@/components/Pagetop.vue";
+import Sidebar from "@/components/container/Sidebar.vue";
+import Topbar from "@/components/container/Topbar.vue";
+import Pagetop from "@/components/container/Pagetop.vue";
 
 export default {
   name: "Home",

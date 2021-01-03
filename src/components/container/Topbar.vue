@@ -123,7 +123,7 @@
               <div class="dropdown-list-image mr-3">
                 <img
                   class="rounded-circle"
-                  src="../../public/img/undraw_profile_1.svg"
+                  src="../../../public/img/undraw_profile_1.svg"
                   alt=""
                 />
                 <div class="status-indicator bg-success"></div>
@@ -140,7 +140,7 @@
               <div class="dropdown-list-image mr-3">
                 <img
                   class="rounded-circle"
-                  src="../../public/img/undraw_profile_2.svg"
+                  src="../../../public/img/undraw_profile_2.svg"
                   alt=""
                 />
                 <div class="status-indicator"></div>
@@ -157,7 +157,7 @@
               <div class="dropdown-list-image mr-3">
                 <img
                   class="rounded-circle"
-                  src="../../public/img/undraw_profile_3.svg"
+                  src="../../../public/img/undraw_profile_3.svg"
                   alt=""
                 />
                 <div class="status-indicator bg-warning"></div>
@@ -227,7 +227,7 @@
             >
             <img
               class="img-profile rounded-circle"
-              src="../../public/img/undraw_profile.svg"
+              src="../../../public/img/undraw_profile.svg"
             />
           </a>
           <!-- Dropdown - User Information -->
@@ -335,6 +335,7 @@ export default {
   name: "Topbar",
   setup() {
     const store = useStore();
+    
     return {
       search: ref(""),
       file: ref(""),
@@ -348,14 +349,13 @@ export default {
       },
 
       async submitFile() {
-        console.log("submit");
         let formData = new FormData();
         formData.append("file", this.file);
         this.toggleUploadModal();
 
-        await store.dispatch("uploadFile", formData);
+        await store.dispatch("stocks/upload", formData);
         swal({
-          title: store.state.uploadStatus,
+          title: store.state.stocks.uploadStatus,
           text: "",
           icon: "success",
           buttons: false,
@@ -364,7 +364,7 @@ export default {
       },
 
       searchTicker() {
-        store.dispatch("searchSymbol", this.search);
+        store.dispatch("stocks/search", this.search);
       },
 
       toggleAlertsDropdown() {
