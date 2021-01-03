@@ -36,6 +36,14 @@
         </router-link>
       </li>
 
+      <!-- Nav Item - Cards -->
+      <li class="nav-item">
+        <router-link class="nav-link" :to="{ name: 'Watchlists' }">
+          <i class="fas fa-fw fa-list"></i>
+          <span>Watchlists</span>
+        </router-link>
+      </li>
+
       <!-- Nav Item - Charts -->
       <li class="nav-item">
         <router-link class="nav-link" :to="{ name: 'Charts' }">

@@ -264,7 +264,7 @@
     </nav>
     <!-- End of Topbar -->
 
-    <!-- Logout Modal-->
+    <!-- Upload Modal-->
     <div
       class="modal fade"
       :class="uploadModal ? 'show block' : ''"
@@ -272,8 +272,7 @@
       tabindex="-1"
       role="dialog"
       aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
+      aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">

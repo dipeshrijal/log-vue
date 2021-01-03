@@ -13,7 +13,15 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Cards.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Card.vue')
+  },
+  {
+    path: '/watchlists',
+    name: 'Watchlists',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/Watchlist.vue')
   },
   {
     path: '/tables/:id',
@@ -21,7 +29,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Tables.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Table.vue')
   },
   {
     path: '/charts',
@@ -29,7 +37,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Charts.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Chart.vue')
   }
 ]
 

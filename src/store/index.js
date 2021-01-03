@@ -4,8 +4,7 @@ import axios from 'axios'
 
 const state = {
   toggle: false,
-  mutatedAllStocks: [],
-  baseUrl: "http://log.com/backend/",
+  baseUrl: "http://localhost:4000/",
   uploadStatus: "",
   totalStocksCount: 0,
   paginatePerPage: 30,
@@ -14,7 +13,9 @@ const state = {
   postionStatus: false,
   isLoading: false,
   timeFilter: "",
+  plStatus: false,
   stocks: [],
+  mutatedStocks: [],
   stock: {}
 }
 
@@ -22,6 +23,10 @@ const actions = {
 
   toggleSidebar({ commit }) {
     commit("toggleSidebar")
+  },
+
+  PnLstatus({ commit }) {
+    commit("PnLstatus")
   },
 
   async getAllStocks({ commit, state }) {
@@ -43,9 +48,8 @@ const actions = {
       .sortBy(({ _id }) => _id)
       .value()
 
-    const totalStocksCount = sstocks.length
-    commit("setTotalStockCount", totalStocksCount)
-
+    commit("setTotalStockCount", sstocks.length)
+    commit("setMutatedStock", totaledStock);
     commit("setAllStocks", sstocks)
   },
 
@@ -114,8 +118,6 @@ const actions = {
       stocks = state.stocks
     }
 
-
-
     const paginated = _(stocks).drop((state.paginationCurrentPage - 1) * state.paginatePerPage).take(state.paginatePerPage).value();
     const totalStocksCount = stocks.length
 
@@ -126,8 +128,6 @@ const actions = {
     state.isLoading = false
 
   },
-
-
 
   async filteredStocks({ commit, state, dispatch }) {
     state.isLoading = true
@@ -144,9 +144,6 @@ const actions = {
       default:
         await dispatch("getAllStocks")
     }
-
-
-
 
     if (state.postionStatus) {
       stocks = _.chain(state.stocks)
@@ -165,8 +162,6 @@ const actions = {
       stocks = state.stocks
     }
 
-
-
     const paginated = _(stocks).drop((state.paginationCurrentPage - 1) * state.paginatePerPage).take(state.paginatePerPage).value();
     const totalStocksCount = stocks.length
 
@@ -179,38 +174,6 @@ const actions = {
 
   },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   async toggleRealized({ dispatch, state }, transaction) {
     await axios.post(`${state.baseUrl}tables/${transaction._id}`, transaction)
 
@@ -222,7 +185,6 @@ const actions = {
 
     commit("setStock", stock.data)
   },
-
 
   async searchSymbol({ commit, dispatch }, search) {
     await dispatch('getAllStocks')
@@ -249,14 +211,17 @@ const actions = {
 }
 
 
-
 const mutations = {
   toggleSidebar(state) {
     state.toggle = !state.toggle
   },
 
-  setMutatedStocks(state, stocks) {
-    state.mutatedAllStocks = stocks
+  PnLstatus(state) {
+    state.plStatus = !state.plStatus
+  },
+
+  setMutatedStock(state, mutatedStocks) {
+    state.mutatedStocks = mutatedStocks
   },
 
   setTotalStockCount(state, totalStocksCount) {
@@ -280,8 +245,30 @@ const mutations = {
   },
 }
 
+const getters = {
+  getTotal() {
+    console.log(state.mutatedStocks)
+    return state.mutatedStocks.reduce((sum, stock) => {
+      return sum + parseFloat(stock.total)
+    }, 0).toFixed(2)
+  },
+
+  getTotalLoss() {
+    return state.mutatedStocks.filter(f => f.total < 0).reduce((sum, stock) => {
+      return sum + parseFloat(stock.total)
+    }, 0).toFixed(2)
+  },
+
+  getTotalProfit() {
+    return state.mutatedStocks.filter(f => f.total > 0).reduce((sum, stock) => {
+      return sum + parseFloat(stock.total)
+    }, 0).toFixed(2)
+  }
+}
+
 export default createStore({
   state,
   mutations,
-  actions
+  actions,
+  getters,
 })

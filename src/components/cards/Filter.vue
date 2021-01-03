@@ -49,7 +49,7 @@
             class="form-check-label small text-uppercase card-link-secondary"
             :for="s.cssid"
             ><i :class="`fas ${s.icon} fa-sm fa-fw mr-2 text-gray-400`"></i
-            >{{ s.text }}</label
+            >{{ s.text }} ({{ getPL(s.text) }})</label
           >
         </div>
       </section>
@@ -122,6 +122,26 @@ export default {
       statusRadio,
       timeRadio,
 
+      getPL(text) {
+        let total = 0;
+        
+        if(store.state.plStatus) {
+          switch (text) {
+          case "All":
+            total = store.getters.getTotal;
+            break;
+          case "Profit":
+            total = store.getters.getTotalProfit;
+            break;
+          case "Loss":
+            total = store.getters.getTotalLoss;
+            break;
+        }
+        }
+
+        return total;
+      },
+
       async getStatus() {
         store.state.status = this.statusRadio;
         await store.dispatch("filteredStocks");
@@ -141,5 +161,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -29,78 +29,21 @@
               :class="filterDropdown ? 'show' : ''"
               aria-labelledby="filterDropdown"
             >
-              <a class="dropdown-item" @click="all('All')">
+              <a class="dropdown-item" @click="plStatus()">
                 <i
                   class="fas fa-balance-scale fa-sm fa-fw mr-2 text-gray-400"
                 ></i>
                 All
               </a>
-              <a class="dropdown-item" @click="profit('Profit')">
-                <i
-                  class="fas fa-level-up-alt fa-sm fa-fw mr-2 text-gray-400"
-                ></i>
-                Profit
-              </a>
-
-              <a class="dropdown-item" @click="loss('Loss')">
-                <i
-                  class="fas fa-level-down-alt fa-sm fa-fw mr-2 text-gray-400"
-                ></i>
-                Loss
-              </a>
-
-              <a class="dropdown-item" @click="open('Open')">
-                <i
-                  class="fas fa-money-check fa-sm fa-fw mr-2 text-gray-400"
-                ></i>
-                Open
-              </a>
 
               <div class="dropdown-divider"></div>
               <a
                 class="dropdown-item"
-                @click="recent(1, 'Last 1 Day')"
                 data-toggle="modal"
                 data-target="#uploadModal"
               >
                 <i class="fas fa-calendar fa-sm fa-fw mr-2 text-gray-400"></i>
                 Last 1 Day
-              </a>
-              <a
-                class="dropdown-item"
-                @click="recent(3, 'Last 3 Days')"
-                data-toggle="modal"
-                data-target="#uploadModal"
-              >
-                <i class="fas fa-calendar fa-sm fa-fw mr-2 text-gray-400"></i>
-                Last 3 Days
-              </a>
-              <a
-                class="dropdown-item"
-                @click="recent(7, 'Last 7 Days')"
-                data-toggle="modal"
-                data-target="#uploadModal"
-              >
-                <i class="fas fa-calendar fa-sm fa-fw mr-2 text-gray-400"></i>
-                Last 15 Days
-              </a>
-              <a
-                class="dropdown-item"
-                @click="recent(7, 'Last 15 Days')"
-                data-toggle="modal"
-                data-target="#uploadModal"
-              >
-                <i class="fas fa-calendar fa-sm fa-fw mr-2 text-gray-400"></i>
-                Last 15 Days
-              </a>
-              <a
-                class="dropdown-item"
-                @click="recent(30, 'Last 30 Days')"
-                data-toggle="modal"
-                data-target="#uploadModal"
-              >
-                <i class="fas fa-calendar fa-sm fa-fw mr-2 text-gray-400"></i>
-                Last 30 Days
               </a>
             </div>
           </span>
@@ -179,8 +122,8 @@ export default {
     store.dispatch("paginate", page.value);
 
     return {
-      filterDropdown: ref(false),
       page,
+      filterDropdown: ref(false),
       filter: ref("Filter"),
       stocks: computed(() => store.state.stocks),
       totalStocksCount: computed(() => store.state.totalStocksCount),
@@ -189,6 +132,10 @@ export default {
       paginate() {
         store.state.paginationCurrentPage = page.value;
         store.dispatch("paginate");
+      },
+
+      plStatus() {
+        store.dispatch("PnLstatus")
       },
 
       toggleFilterDropdown() {
