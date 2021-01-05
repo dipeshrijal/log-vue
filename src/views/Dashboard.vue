@@ -423,7 +423,7 @@
 
 <script>
 export default {
-  name: "Home",
+  name: "Dashboard",
   components: {},
 };
 </script>

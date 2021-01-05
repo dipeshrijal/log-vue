@@ -69,7 +69,7 @@
 
 <script>
 export default {
-  name: "Cards",
+  name: "Chart",
   components: {},
 };
 </script>

@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "Topbar",
+  name: "Pagetop",
 };
 </script>
 

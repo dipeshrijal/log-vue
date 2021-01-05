@@ -3,19 +3,19 @@
     <!-- Sidebar -->
     <ul
       class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
-      :class="toggle == true ? 'toggled' : ''"
+      :class="isSidebarMinimized == true ? 'toggled' : ''"
       id="accordionSidebar"
     >
       <!-- Sidebar - Brand -->
-      <a
+      <router-link
+        to="/"
         class="sidebar-brand d-flex align-items-center justify-content-center"
-        href="index.html"
       >
         <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-laugh-wink"></i>
+          <i class="fas fa-money-check"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
-      </a>
+        <div class="sidebar-brand-text mx-3">Stocks Log</div>
+      </router-link>
 
       <!-- Divider -->
       <hr class="sidebar-divider my-0" />
@@ -30,9 +30,17 @@
 
       <!-- Nav Item - Cards -->
       <li class="nav-item">
-        <router-link class="nav-link" :to="{ name: 'Cards' }">
+        <router-link class="nav-link" :to="{ name: 'Stocks' }">
           <i class="fas fa-fw fa-money-check"></i>
           <span>Cards</span>
+        </router-link>
+      </li>
+
+      <!-- Nav Item - Cards -->
+      <li class="nav-item">
+        <router-link class="nav-link" :to="{ name: 'Watchlists' }">
+          <i class="fas fa-fw fa-list"></i>
+          <span>Watchlists</span>
         </router-link>
       </li>
 
@@ -48,7 +56,7 @@
       <li class="nav-item">
         <router-link
           class="nav-link"
-          :to="{ name: 'Tables', params: { id: 'fb' } }"
+          :to="{ name: 'StockDetails', params: { id: 'fb' } }"
         >
           <i class="fas fa-fw fa-table"></i>
           <span>Tables </span>
@@ -63,7 +71,7 @@
         <button
           class="rounded-circle border-0"
           id="sidebarToggle"
-          @click="clickToggle"
+          @click="toggleSidebar"
         ></button>
       </div>
     </ul>
@@ -79,9 +87,9 @@ export default {
   setup() {
     const store = useStore();
     return {
-      toggle: computed(() => store.state.toggle),
-      clickToggle: () => {
-        store.commit("toggleval");
+      isSidebarMinimized: computed(() => store.state.isSidebarMinimized),
+      toggleSidebar: () => {
+        store.dispatch("toggleSidebar");
       },
     };
   },
